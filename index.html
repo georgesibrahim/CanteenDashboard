@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canteen System Dashboards</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.3.3/echarts.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.3.3/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+            color: #00AE8D;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 100%;
+            margin: auto;
+            padding: 20px;
+        }
+        .chart-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border-left: 5px solid #00AE8D;
+        }
+        .chart-container:hover {
+            transform: translateY(-5px);
+        }
+        .filter-container {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 5px solid #00AE8D;
+        }
+        h2 {
+            color: #00AE8D;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Date Filter -->
+        <div class="filter-container">
+            <label for="dateFilter" class="font-semibold text-gray-700">Filter by Date:</label>
+            <input type="month" id="dateFilter" name="dateFilter" onchange="updateCharts()" class="ml-2 p-2 border border-gray-300 rounded">
+        </div>
+
+        <!-- Dashboards (same as before) -->
+        <div class="chart-container">
+            <h2>Daily Meal Attendance</h2>
+            <div id="dailyMealAttendance" style="height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Department-Wise Meal Distribution</h2>
+            <div id="departmentMealDistribution" style="height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Contractor vs Employee Usage</h2>
+            <div id="contractorVsEmployee" style="height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Monthly Meal per Department</h2>
+            <div id="monthlyMealPerDepartment" style="height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Contractor Meals per Company per Month</h2>
+            <div id="contractorsPerCompany" style="height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Number of Visitors per Department</h2>
+            <div id="visitorsPerDepartment" style="height: 400px;"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Number of Visitors per Employee</h2>
+            <div id="visitorsPerEmployee" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Utility function to generate random data
+        function generateRandomData(length, maxValue) {
+            return Array.from({ length }, () => Math.floor(Math.random() * maxValue));
+        }
+
+        // Initialize charts
+        const dailyMealAttendanceChart = echarts.init(document.getElementById('dailyMealAttendance'));
+        const departmentMealDistributionChart = echarts.init(document.getElementById('departmentMealDistribution'));
+        const contractorVsEmployeeChart = echarts.init(document.getElementById('contractorVsEmployee'));
+        const monthlyMealPerDepartmentChart = echarts.init(document.getElementById('monthlyMealPerDepartment'));
+        const contractorsPerCompanyChart = echarts.init(document.getElementById('contractorsPerCompany'));
+        const visitorsPerDepartmentChart = echarts.init(document.getElementById('visitorsPerDepartment'));
+        const visitorsPerEmployeeChart = echarts.init(document.getElementById('visitorsPerEmployee'));
+
+        // Function to initialize charts with random data
+        function initCharts() {
+            dailyMealAttendanceChart.setOption({
+                xAxis: {
+                    type: 'category',
+                    data: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: generateRandomData(7, 100),
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        color: '#4bc0c0'
+                    }
+                }]
+            });
+
+            departmentMealDistributionChart.setOption({
+                xAxis: {
+                    type: 'category',
+                    data: ["IT", "HR", "Finance", "Operations", "Sales", "Marketing"]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: generateRandomData(6, 200),
+                    type: 'bar',
+                    itemStyle: {
+                        color: '#9966ff'
+                    }
+                }]
+            });
+
+            contractorVsEmployeeChart.setOption({
+                tooltip: {
+                    trigger: 'item'
+                },
+                series: [{
+                    type: 'pie',
+                    radius: '50%',
+                    data: [
+                        { value: 300, name: 'Employee', itemStyle: { color: '#ff6384' } },
+                        { value: 50, name: 'Contractor', itemStyle: { color: '#36a2eb' } }
+                    ]
+                }]
+            });
+
+            monthlyMealPerDepartmentChart.setOption({
+                legend: {
+                    data: ['IT', 'HR', 'Finance', 'Operations']
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ["January", "February", "March"]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: 'IT',
+                        data: generateRandomData(3, 500),
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#ff6384'
+                        }
+                    },
+                    {
+                        name: 'HR',
+                        data: generateRandomData(3, 500),
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#36a2eb'
+                        }
+                    },
+                    {
+                        name: 'Finance',
+                        data: generateRandomData(3, 500),
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#4bc0c0'
+                        }
+                    },
+                    {
+                        name: 'Operations',
+                        data: generateRandomData(3, 500),
+                        type: 'bar',
+                        itemStyle: {
+                            color: '#9966ff'
+                        }
+                    }
+                ]
+            });
+
+            contractorsPerCompanyChart.setOption({
+                legend: {
+                    data: ['Microsoft', 'SAP', 'Mannai', 'Intalio']
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ["January", "February", "March"]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: 'Microsoft',
+                        data: generateRandomData(3, 100),
+                        type: 'line',
+                        smooth: true,
+                        itemStyle: {
+                            color: '#ff9f40'
+                        }
+                    },
+                    {
+                        name: 'SAP',
+                        data: generateRandomData(3, 100),
+                        type: 'line',
+                        smooth: true,
+                        itemStyle: {
+                            color: '#4bc0c0'
+                        }
+                    },
+                    {
+                        name: 'Mannai',
+                        data: generateRandomData(3, 100),
+                        type: 'line',
+                        smooth: true,
+                        itemStyle: {
+                            color: '#9966ff'
+                        }
+                    },
+                    {
+                        name: 'Intalio',
+                        data: generateRandomData(3, 100),
+                        type: 'line',
+                        smooth: true,
+                        itemStyle: {
+                            color: '#ff6384'
+                        }
+                    }
+                ]
+            });
+
+            visitorsPerDepartmentChart.setOption({
+                xAxis: {
+                    type: 'category',
+                    data: ["IT", "HR", "Finance", "Operations", "Sales", "Marketing"]
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: generateRandomData(6, 150),
+                    type: 'bar',
+                    itemStyle: {
+                        color: '#ffcd56'
+                    }
+                }]
+            });
+
+            const employeeNames = [
+                "Abdullah Al-Kuwari", "Saad Al-Mohannadi", "Nasser Al-Suwaidi", "Jassim Al-Emadi", "Khalid Al-Ansari",
+                "Mubarak Al-Mannai", "Fahad Al-Kaabi", "Mohammed Al-Thani", "Hamad Al-Naimi", "Ali Al-Dosari",
+                "Ahmed Al-Muraikhi", "Salem Al-Marri", "Rashid Al-Jaber", "Yousef Al-Ahbabi", "Majed Al-Khalifa"
+            ];
+            visitorsPerEmployeeChart.setOption({
+                xAxis: {
+                    type: 'category',
+                    data: employeeNames
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function (params) {
+                        return `${params[0].name}: ${params[0].value} visitors`;
+                    }
+                },
+                series: [{
+                    data: generateRandomData(employeeNames.length, 50).map((value, index) => ({
+                        value: value,
+                        name: employeeNames[index]
+                    })),
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        color: '#c9cbcf'
+                    }
+                }]
+            });
+        }
+
+        // Update charts based on selected month
+        function updateCharts() {
+            const selectedDate = document.getElementById('dateFilter').value;
+            if (selectedDate) {
+                // Update charts by regenerating new data for the selected month
+                console.log(`Updating charts for ${selectedDate}`);
+                initCharts(); // Reinitialize charts with new data
+            }
+        }
+
+        // Initialize the charts with random data on page load
+        initCharts();
+
+        // Function to handle resizing of the charts
+        window.addEventListener('resize', function () {
+            dailyMealAttendanceChart.resize();
+            departmentMealDistributionChart.resize();
+            contractorVsEmployeeChart.resize();
+            monthlyMealPerDepartmentChart.resize();
+            contractorsPerCompanyChart.resize();
+            visitorsPerDepartmentChart.resize();
+            visitorsPerEmployeeChart.resize();
+        });
+    </script>
+</body>
+</html>

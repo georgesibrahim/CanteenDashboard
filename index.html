@@ -107,9 +107,12 @@
         const visitorsPerDepartmentChart = echarts.init(document.getElementById('visitorsPerDepartment'));
         const visitorsPerEmployeeChart = echarts.init(document.getElementById('visitorsPerEmployee'));
 
-        // Function to initialize charts with random data
+        // Function to initialize charts with random data and tooltips
         function initCharts() {
             dailyMealAttendanceChart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
                 xAxis: {
                     type: 'category',
                     data: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -128,6 +131,9 @@
             });
 
             departmentMealDistributionChart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
                 xAxis: {
                     type: 'category',
                     data: ["IT", "HR", "Finance", "Operations", "Sales", "Marketing"]
@@ -159,6 +165,9 @@
             });
 
             monthlyMealPerDepartmentChart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
                 legend: {
                     data: ['IT', 'HR', 'Finance', 'Operations']
                 },
@@ -206,6 +215,9 @@
             });
 
             contractorsPerCompanyChart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
                 legend: {
                     data: ['Microsoft', 'SAP', 'Mannai', 'Intalio']
                 },
@@ -257,6 +269,9 @@
             });
 
             visitorsPerDepartmentChart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
                 xAxis: {
                     type: 'category',
                     data: ["IT", "HR", "Finance", "Operations", "Sales", "Marketing"]
@@ -279,18 +294,18 @@
                 "Ahmed Al-Muraikhi", "Salem Al-Marri", "Rashid Al-Jaber", "Yousef Al-Ahbabi", "Majed Al-Khalifa"
             ];
             visitorsPerEmployeeChart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function (params) {
+                        return `${params[0].name}: ${params[0].value} visitors`;
+                    }
+                },
                 xAxis: {
                     type: 'category',
                     data: employeeNames
                 },
                 yAxis: {
                     type: 'value'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function (params) {
-                        return `${params[0].name}: ${params[0].value} visitors`;
-                    }
                 },
                 series: [{
                     data: generateRandomData(employeeNames.length, 50).map((value, index) => ({
@@ -310,7 +325,6 @@
         function updateCharts() {
             const selectedDate = document.getElementById('dateFilter').value;
             if (selectedDate) {
-                // Update charts by regenerating new data for the selected month
                 console.log(`Updating charts for ${selectedDate}`);
                 initCharts(); // Reinitialize charts with new data
             }
